@@ -1,0 +1,19 @@
+﻿<Window x:Class="ChuNhatLamWPF.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Trang chính" Height="450" Width="800"
+        WindowStartupLocation="CenterScreen">
+    <DockPanel>
+        <StackPanel DockPanel.Dock="Left" Width="180" Background="#1b4b72">
+            <Button Content="Quản lý khách hàng" Margin="10" Height="40" Foreground="White" Background="#1976d2"
+                    Click="CustomerButton_Click"/>
+            <Button Content="Quản lý sản phẩm" Margin="10" Height="40" Foreground="White" Background="#1976d2"
+                    Click="ProductButton_Click"/>
+            <Button Content="Quản lý đơn hàng" Margin="10" Height="40" Foreground="White" Background="#1976d2"
+                    Click="OrderButton_Click"/>
+            <Button Content="Báo cáo" Margin="10" Height="40" Foreground="White" Background="#1976d2"
+                    Click="ReportButton_Click"/>
+        </StackPanel>
+        <Frame x:Name="MainFrame" NavigationUIVisibility="Hidden"/>
+    </DockPanel>
+</Window>

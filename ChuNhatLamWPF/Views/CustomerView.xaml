@@ -1,0 +1,29 @@
+﻿<Window x:Class="ChuNhatLamWPF.Views.CustomerView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:ChuNhatLamWPF.ViewModels;assembly=ChuNhatLamWPF"
+        mc:Ignorable="d"
+        Title="Quản lý Khách hàng" Height="400" Width="600">
+    <Window.DataContext>
+        <vm:CustomerViewModel />
+    </Window.DataContext>
+    <DockPanel Margin="10">
+        <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Margin="0,0,0,10">
+            <Button Content="Thêm" Command="{Binding AddCommand}" Width="80" Margin="0,0,10,0"/>
+            <Button Content="Sửa" Command="{Binding EditCommand}" Width="80" Margin="0,0,10,0"/>
+            <Button Content="Xóa" Command="{Binding DeleteCommand}" Width="80" Margin="0,0,10,0"/>
+            <Button Content="Làm mới" Command="{Binding RefreshCommand}" Width="80"/>
+        </StackPanel>
+        <DataGrid ItemsSource="{Binding Customers}" SelectedItem="{Binding SelectedCustomer}" AutoGenerateColumns="False" 
+                  CanUserAddRows="False" Margin="0,0,0,10">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="ID" Binding="{Binding CustomerID}" Width="Auto"/>
+                <DataGridTextColumn Header="Tên công ty" Binding="{Binding CompanyName}" Width="*"/>
+                <DataGridTextColumn Header="Tên liên hệ" Binding="{Binding ContactName}" Width="*"/>
+                <DataGridTextColumn Header="Số điện thoại" Binding="{Binding Phone}" Width="*"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </DockPanel>
+</Window>
