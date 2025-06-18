@@ -10,7 +10,7 @@ namespace Lucy_SalesData.BLL.Interfaces
     public interface IReportService
     {
         // Báo cáo tổng doanh thu trong khoảng thời gian
-        decimal GetRevenue(DateTime from, DateTime to);
+        decimal GetRevenue(DateTime fromDate, DateTime toDate);
 
         // Báo cáo doanh số theo từng nhân viên
         IEnumerable<(Employee employee, decimal revenue)> GetRevenueByEmployee(DateTime from, DateTime to);

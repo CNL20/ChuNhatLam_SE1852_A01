@@ -11,6 +11,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Lucy_SalesData.DAL.Repositories;
+using Lucy_SalesData.DAL.Singleton;
+using ChuNhatLamWPF.ViewModels;
 
 namespace ChuNhatLamWPF.Views
 {
@@ -22,6 +25,12 @@ namespace ChuNhatLamWPF.Views
         public OrderView()
         {
             InitializeComponent();
+            var context = DbContextFactory.Create();
+            var orderRepository = new OrderRepository(context);
+            var customerRepository = new CustomerRepository(context);
+            var employeeRepository = new EmployeeRepository(context);
+            var orderDetailRepository = new OrderDetailRepository(context);
+            DataContext = new OrderViewModel(orderRepository, customerRepository, employeeRepository, orderDetailRepository);
         }
     }
 }

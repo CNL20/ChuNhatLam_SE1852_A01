@@ -3,21 +3,39 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:vm="clr-namespace:ChuNhatLamWPF.ViewModels;assembly=ChuNhatLamWPF"
+        xmlns:vm="clr-namespace:ChuNhatLamWPF.ViewModels"
         mc:Ignorable="d"
         Title="Quản lý Khách hàng" Height="400" Width="600">
-    <Window.DataContext>
-        <vm:CustomerViewModel />
-    </Window.DataContext>
     <DockPanel Margin="10">
+        <!-- Vùng tìm kiếm -->
         <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Margin="0,0,0,10">
-            <Button Content="Thêm" Command="{Binding AddCommand}" Width="80" Margin="0,0,10,0"/>
-            <Button Content="Sửa" Command="{Binding EditCommand}" Width="80" Margin="0,0,10,0"/>
-            <Button Content="Xóa" Command="{Binding DeleteCommand}" Width="80" Margin="0,0,10,0"/>
-            <Button Content="Làm mới" Command="{Binding RefreshCommand}" Width="80"/>
+            <TextBox Width="200" Text="{Binding SearchKey, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,10,0"/>
+            <Button Content="Tìm kiếm" Command="{Binding SearchCommand}" Width="80"/>
         </StackPanel>
-        <DataGrid ItemsSource="{Binding Customers}" SelectedItem="{Binding SelectedCustomer}" AutoGenerateColumns="False" 
-                  CanUserAddRows="False" Margin="0,0,0,10">
+        <!-- Vùng nhập liệu -->
+        <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Margin="0,0,0,10">
+            <StackPanel Orientation="Vertical" Margin="0,0,10,0">
+                <TextBlock Text="Tên công ty:"/>
+                <TextBox Width="150" Text="{Binding CompanyNameInput, UpdateSourceTrigger=PropertyChanged}" />
+            </StackPanel>
+            <StackPanel Orientation="Vertical" Margin="0,0,10,0">
+                <TextBlock Text="Tên liên hệ:"/>
+                <TextBox Width="120" Text="{Binding ContactNameInput, UpdateSourceTrigger=PropertyChanged}" />
+            </StackPanel>
+            <StackPanel Orientation="Vertical" Margin="0,0,10,0">
+                <TextBlock Text="Số điện thoại:"/>
+                <TextBox Width="110" Text="{Binding PhoneInput, UpdateSourceTrigger=PropertyChanged}" />
+            </StackPanel>
+            <StackPanel Orientation="Vertical" Margin="0,0,0,0" VerticalAlignment="Bottom">
+                <Button Content="Thêm" Command="{Binding AddCommand}" Width="80" Margin="0,0,0,5"/>
+                <Button Content="Sửa" Command="{Binding EditCommand}" Width="80" Margin="0,0,0,5"/>
+                <Button Content="Xóa" Command="{Binding DeleteCommand}" Width="80" Margin="0,0,0,5"/>
+                <Button Content="Làm mới" Command="{Binding RefreshCommand}" Width="80"/>
+            </StackPanel>
+        </StackPanel>
+        <!-- DataGrid hiển thị danh sách khách hàng -->
+        <DataGrid ItemsSource="{Binding Customers}" SelectedItem="{Binding SelectedCustomer}" 
+                  AutoGenerateColumns="False" CanUserAddRows="False" Margin="0,0,0,10" Height="250">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="ID" Binding="{Binding CustomerID}" Width="Auto"/>
                 <DataGridTextColumn Header="Tên công ty" Binding="{Binding CompanyName}" Width="*"/>

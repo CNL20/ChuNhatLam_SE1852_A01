@@ -1,29 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
+﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
 using System.Windows;
-using Lucy_SalesData.BLL.Interfaces;
-using Lucy_SalesData.BLL.Services;
-using Lucy_SalesData.DAL.Repositories;
-using ChuNhatLamWPF.Helper.ChuNhatLamWPF.ViewModels;
+using System.Windows.Input;
+using ChuNhatLamWPF.Helper;
+using System.Linq;
+using Lucy_SalesData.DAL.Singleton;
+using Lucy_SalesData.DAL.Models;
+using ChuNhatLamWPF.Views;
+using ChuNhatLamWPF;
+using Microsoft.EntityFrameworkCore;
 
 namespace ChuNhatLamWPF.ViewModels
 {
-    internal class LoginViewModel : INotifyPropertyChanged
+    public class LoginViewModel : INotifyPropertyChanged
     {
-        private string _userName;
+        private string _username;
         private string _password;
-        private readonly IEmployeeService _employeeService;
 
-        public string UserName
+        public string Username
         {
-            get => _userName;
-            set { _userName = value; OnPropertyChanged(); }
+            get => _username;
+            set { _username = value; OnPropertyChanged(); }
         }
 
         public string Password
@@ -34,34 +31,51 @@ namespace ChuNhatLamWPF.ViewModels
 
         public ICommand LoginCommand { get; }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
         public LoginViewModel()
         {
-            // Khởi tạo service, có thể inject qua DI nếu setup
-            _employeeService = new EmployeeService(/* truyền repository nếu cần */);
             LoginCommand = new RelayCommand(Login);
         }
 
         private void Login(object parameter)
         {
-            var employee = _employeeService.Login(UserName, Password);
-            if (employee != null)
+            try
             {
-                MessageBox.Show("Đăng nhập thành công!");
-                // Chuyển sang màn hình chính
-                Application.Current.Windows[0].Close();
-                new MainWindow().Show();
+                // Kết nối tới DbContext
+                var context = DbContextFactory.Create();
+                var user = context.Employees
+                    .AsNoTracking()  // Thêm dòng này để tránh tracking entity
+                    .FirstOrDefault(e => e.UserName == Username && e.Password == Password);
+
+                if (user != null)
+                {
+                    MessageBox.Show("Đăng nhập thành công!");
+                    // Mở MainWindow
+                    var mainWindow = new MainWindow();
+                    mainWindow.Show();
+                    
+                    // Đóng cửa sổ login
+                    foreach (Window window in Application.Current.Windows)
+                    {
+                        if (window is LoginView)
+                        {
+                            window.Close();
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Sai tài khoản hoặc mật khẩu!");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show("Sai tài khoản hoặc mật khẩu!");
+                MessageBox.Show($"Lỗi khi đăng nhập: {ex.Message}");
             }
         }
 
+        public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string name = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
+            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
 }

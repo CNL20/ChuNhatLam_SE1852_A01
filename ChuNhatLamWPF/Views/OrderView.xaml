@@ -1,15 +1,37 @@
 ﻿<Window x:Class="ChuNhatLamWPF.Views.OrderView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Quản lý Đơn hàng" Height="400" Width="600"
+        Title="Quản lý Đơn hàng" Height="450" Width="700"
         WindowStartupLocation="CenterScreen">
     <DockPanel Margin="10">
+        <!-- Nhập liệu -->
         <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Margin="0,0,0,10">
-            <Button Content="Thêm" Command="{Binding AddCommand}" Width="80" Margin="0,0,10,0"/>
-            <Button Content="Sửa" Command="{Binding EditCommand}" Width="80" Margin="0,0,10,0"/>
-            <Button Content="Xóa" Command="{Binding DeleteCommand}" Width="80" Margin="0,0,10,0"/>
-            <Button Content="Làm mới" Command="{Binding RefreshCommand}" Width="80"/>
+            <StackPanel Orientation="Vertical" Margin="0,0,10,0">
+                <TextBlock Text="Khách hàng:"/>
+                <ComboBox Width="150"
+                          ItemsSource="{Binding Customers}"
+                          DisplayMemberPath="CompanyName"
+                          SelectedItem="{Binding SelectedCustomer}" />
+            </StackPanel>
+            <StackPanel Orientation="Vertical" Margin="0,0,10,0">
+                <TextBlock Text="Nhân viên:"/>
+                <ComboBox Width="120"
+                          ItemsSource="{Binding Employees}"
+                          DisplayMemberPath="Name"
+                          SelectedItem="{Binding SelectedEmployee}" />
+            </StackPanel>
+            <StackPanel Orientation="Vertical" Margin="0,0,10,0">
+                <TextBlock Text="Ngày đặt:"/>
+                <DatePicker Width="120" SelectedDate="{Binding OrderDateInput}" />
+            </StackPanel>
+            <StackPanel Orientation="Vertical" Margin="0,0,0,0" VerticalAlignment="Bottom">
+                <Button Content="Thêm" Command="{Binding AddCommand}" Width="80" Margin="0,0,0,5"/>
+                <Button Content="Sửa" Command="{Binding EditCommand}" Width="80" Margin="0,0,0,5"/>
+                <Button Content="Xóa" Command="{Binding DeleteCommand}" Width="80" Margin="0,0,0,5"/>
+                <Button Content="Làm mới" Command="{Binding RefreshCommand}" Width="80"/>
+            </StackPanel>
         </StackPanel>
+        <!-- Danh sách -->
         <DataGrid ItemsSource="{Binding Orders}" SelectedItem="{Binding SelectedOrder}" AutoGenerateColumns="False" CanUserAddRows="False" Margin="0,0,0,10">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="ID" Binding="{Binding OrderID}" Width="Auto"/>

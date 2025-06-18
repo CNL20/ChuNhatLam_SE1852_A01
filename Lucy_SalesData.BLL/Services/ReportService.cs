@@ -8,7 +8,7 @@ using Lucy_SalesData.DAL.Interfaces;
 using Lucy_SalesData.DAL.Models;
 using Lucy_SalesData.DAL.Repositories;
 
-namespace Business.Services
+namespace Lucy_SalesData.BLL.Services
 {
     public class ReportService : IReportService
     {
@@ -33,18 +33,15 @@ namespace Business.Services
         }
 
         // Tổng doanh thu trong khoảng thời gian
-        public decimal GetRevenue(DateTime from, DateTime to)
+        public decimal GetRevenue(DateTime fromDate, DateTime toDate)
         {
-            var orders = _orderRepository.GetAll()
-                .Where(o => o.OrderDate >= from && o.OrderDate <= to)
-                .Select(o => o.OrderID)
-                .ToList();
-
-            var orderDetails = _orderDetailRepository.GetAll()
-                .Where(od => orders.Contains(od.OrderID))
-                .ToList();
-
-            return orderDetails.Sum(od => od.UnitPrice * od.Quantity * (decimal)(1 - od.Discount));
+            var orders = _orderRepository.GetOrdersByDateRange(fromDate, toDate);
+            var orderIds = orders.Select(o => o.OrderID).ToList();
+            
+            var details = _orderDetailRepository.GetDetailsByOrderIds(orderIds);
+            var revenue = details.Sum(d => d.UnitPrice * d.Quantity * (1 - (decimal)d.Discount));
+            
+            return revenue;
         }
 
         // Doanh số theo nhân viên

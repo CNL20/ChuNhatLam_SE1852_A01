@@ -16,6 +16,6 @@ namespace Lucy_SalesData.DAL.Interfaces
         void Update(OrderDetail orderDetail);
         void Delete(int orderId, int productId);
         void DeleteByOrderId(int orderId);
-
+        List<OrderDetail> GetDetailsByOrderIds(List<int> orderIds);
     }
 }

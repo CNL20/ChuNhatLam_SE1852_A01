@@ -11,6 +11,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using ChuNhatLamWPF.ViewModels;
+using Lucy_SalesData.DAL.Repositories;
+using Lucy_SalesData.DAL.Singleton;
 
 namespace ChuNhatLamWPF.Views
 {
@@ -22,6 +25,9 @@ namespace ChuNhatLamWPF.Views
         public ProductView()
         {
             InitializeComponent();
+            var context = DbContextFactory.Create();
+            var productRepository = new ProductRepository(context);
+            DataContext = new ProductViewModel(productRepository);
         }
     }
 }

@@ -9,11 +9,11 @@ namespace Lucy_SalesData.BLL.Interfaces
 {
     public interface ICustomerService
     {
-        List<Customer> GetAll();
-        Customer GetById(int id);
-        void Add(Customer customer);
-        void Update(Customer customer);
-        void Delete(int id);
+        IEnumerable<Customer> GetAllCustomers();
+        Customer GetCustomerById(int id);
+        void AddCustomer(Customer customer);
+        void UpdateCustomer(Customer customer);
+        void DeleteCustomer(int id);
         List<Customer> Search(string key);
     }
 }

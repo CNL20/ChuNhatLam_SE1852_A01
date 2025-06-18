@@ -1,43 +1,73 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ChuNhatLamWPF.Helper.ChuNhatLamWPF.ViewModels;
-using ChuNhatLamWPF.Helper;
+using System.ComponentModel;
 using System.Windows.Input;
+using ChuNhatLamWPF.Helper;
+using Lucy_SalesData.BLL.Interfaces;
 
 namespace ChuNhatLamWPF.ViewModels
 {
-    public class ReportViewModel : ViewModelBase
+    public class ReportViewModel : INotifyPropertyChanged
     {
-        private int _totalOrders;
-        public int TotalOrders
+        private readonly IReportService _reportService;
+
+        private DateTime _fromDate = DateTime.Today;
+        public DateTime FromDate
         {
-            get => _totalOrders;
-            set { _totalOrders = value; OnPropertyChanged(); }
+            get => _fromDate;
+            set
+            {
+                _fromDate = value;
+                OnPropertyChanged(nameof(FromDate));
+            }
+        }
+
+        private DateTime _toDate = DateTime.Today;
+        public DateTime ToDate
+        {
+            get => _toDate;
+            set
+            {
+                _toDate = value;
+                OnPropertyChanged(nameof(ToDate));
+            }
         }
 
         private decimal _totalRevenue;
         public decimal TotalRevenue
         {
             get => _totalRevenue;
-            set { _totalRevenue = value; OnPropertyChanged(); }
+            set
+            {
+                _totalRevenue = value;
+                OnPropertyChanged(nameof(TotalRevenue));
+            }
         }
 
-        public ICommand RefreshCommand { get; }
+        public ICommand RefreshCommand { get; private set; }
 
-        public ReportViewModel()
+        public ReportViewModel(IReportService reportService)
         {
-            RefreshCommand = new RelayCommand(_ => LoadReport());
+            _reportService = reportService;
+            RefreshCommand = new RelayCommand(ExecuteRefresh);
+            LoadReport();
+        }
+
+        private void ExecuteRefresh(object parameter)
+        {
             LoadReport();
         }
 
         private void LoadReport()
         {
-            // Gán giá trị mẫu, thực tế gọi BLL/DAL để lấy dữ liệu
-            TotalOrders = 20;
-            TotalRevenue = 100000000;
+            TotalRevenue = _reportService.GetRevenue(FromDate, ToDate);
+            // Nếu muốn các báo cáo khác, thêm property và gọi hàm tương ứng của _reportService
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

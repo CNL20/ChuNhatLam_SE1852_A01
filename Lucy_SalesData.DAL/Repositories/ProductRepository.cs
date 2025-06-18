@@ -11,39 +11,47 @@ namespace Lucy_SalesData.DAL.Repositories
 {
     public class ProductRepository : IProductRepository
     {
-        private readonly List<Product> _products;
-        public ProductRepository()
+        private readonly DataContext _context;
+        public ProductRepository(DataContext context)
         {
-            _products = DataContext.Instance.Products;
+            _context = context;
         }
 
-        public List<Product> GetAll() => _products;
-        public Product GetById(int id) => _products.FirstOrDefault(p => p.ProductID == id);
+        public List<Product> GetAll() => _context.Products.ToList();
+
+        public Product GetById(int id) => _context.Products.Find(id);
 
         public void Add(Product product)
         {
-            product.ProductID = _products.Count > 0 ? _products.Max(p => p.ProductID) + 1 : 1;
-            _products.Add(product);
+            _context.Products.Add(product);
+            _context.SaveChanges();
         }
 
         public void Update(Product product)
         {
-            var pro = GetById(product.ProductID);
+            var pro = _context.Products.Find(product.ProductID);
             if (pro != null)
             {
                 pro.ProductName = product.ProductName;
+                pro.SupplierID = product.SupplierID;
                 pro.CategoryID = product.CategoryID;
+                pro.QuantityPerUnit = product.QuantityPerUnit;
                 pro.UnitPrice = product.UnitPrice;
                 pro.UnitsInStock = product.UnitsInStock;
+                pro.UnitsOnOrder = product.UnitsOnOrder;
+                pro.ReorderLevel = product.ReorderLevel;
+                pro.Discontinued = product.Discontinued;
+                _context.SaveChanges();
             }
         }
 
         public void Delete(int id)
         {
-            var pro = GetById(id);
+            var pro = _context.Products.Find(id);
             if (pro != null)
             {
-                _products.Remove(pro);
+                _context.Products.Remove(pro);
+                _context.SaveChanges();
             }
         }
 
@@ -51,12 +59,14 @@ namespace Lucy_SalesData.DAL.Repositories
         {
             if (string.IsNullOrWhiteSpace(key))
             {
-                return _products;
+                return _context.Products.ToList();
             }
             else
             {
-                return _products.Where(p => p.ProductName.ToLower().Contains(key.ToLower())).ToList();
+                return _context.Products
+                    .Where(p => p.ProductName.ToLower().Contains(key.ToLower()))
+                    .ToList();
             }
         }
     }
-}    
+}

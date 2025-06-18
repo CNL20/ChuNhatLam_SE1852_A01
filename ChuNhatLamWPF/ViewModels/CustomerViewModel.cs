@@ -1,83 +1,186 @@
 ﻿using System.Collections.ObjectModel;
-using System.Windows;
+using System.ComponentModel;
 using System.Windows.Input;
-using ChuNhatLamWPF.Helper;
-using ChuNhatLamWPF.Helper.ChuNhatLamWPF.ViewModels;
+using Lucy_SalesData.BLL.Interfaces;
 using Lucy_SalesData.DAL.Models;
+using ChuNhatLamWPF.Helper;
+using System.Windows;
 
 namespace ChuNhatLamWPF.ViewModels
 {
-    public class CustomerViewModel : ViewModelBase
+    public class CustomerViewModel : INotifyPropertyChanged
     {
-        public ObservableCollection<Customer> Customers { get; set; }
+        private readonly ICustomerService _customerService;
+        private ObservableCollection<Customer> _customers;
         private Customer _selectedCustomer;
+        private string _companyNameInput = "";
+        private string _contactNameInput = "";
+        private string _phoneInput = "";
+        private string _searchKey;
+
+        public CustomerViewModel(ICustomerService customerService)
+        {
+            _customerService = customerService;
+            LoadCustomers();
+            InitializeCommands();
+        }
+
+        public ObservableCollection<Customer> Customers
+        {
+            get => _customers;
+            set
+            {
+                _customers = value;
+                OnPropertyChanged(nameof(Customers));
+            }
+        }
+
         public Customer SelectedCustomer
         {
             get => _selectedCustomer;
-            set { _selectedCustomer = value; OnPropertyChanged(); }
+            set
+            {
+                _selectedCustomer = value;
+                if (value != null)
+                {
+                    CompanyNameInput = value.CompanyName;
+                    ContactNameInput = value.ContactName;
+                    PhoneInput = value.Phone;
+                }
+                OnPropertyChanged(nameof(SelectedCustomer));
+            }
         }
 
-        public ICommand AddCommand { get; }
-        public ICommand EditCommand { get; }
-        public ICommand DeleteCommand { get; }
-        public ICommand RefreshCommand { get; }
-
-        public CustomerViewModel()
+        public string CompanyNameInput
         {
-            Customers = new ObservableCollection<Customer>
+            get => _companyNameInput;
+            set
             {
-                new Customer { CustomerID = 1, CompanyName = "A", ContactName = "Nguyen Van A", Phone = "0901234567" },
-                new Customer { CustomerID = 2, CompanyName = "B", ContactName = "Le Thi B", Phone = "0912345678" }
-            };
-            AddCommand = new RelayCommand(_ => AddCustomer());
-            EditCommand = new RelayCommand(_ => EditCustomer(), _ => SelectedCustomer != null);
-            DeleteCommand = new RelayCommand(_ => DeleteCustomer(), _ => SelectedCustomer != null);
-            RefreshCommand = new RelayCommand(_ => LoadCustomers());
+                _companyNameInput = value;
+                OnPropertyChanged(nameof(CompanyNameInput));
+            }
+        }
+
+        public string ContactNameInput
+        {
+            get => _contactNameInput;
+            set
+            {
+                _contactNameInput = value;
+                OnPropertyChanged(nameof(ContactNameInput));
+            }
+        }
+
+        public string PhoneInput
+        {
+            get => _phoneInput;
+            set
+            {
+                _phoneInput = value;
+                OnPropertyChanged(nameof(PhoneInput));
+            }
+        }
+
+        public string SearchKey
+        {
+            get => _searchKey;
+            set { _searchKey = value; OnPropertyChanged(nameof(SearchKey)); }
+        }
+
+        public ICommand AddCommand { get; private set; }
+        public ICommand EditCommand { get; private set; }
+        public ICommand DeleteCommand { get; private set; }
+        public ICommand RefreshCommand { get; private set; }
+        public ICommand SearchCommand { get; private set; }
+
+        private void InitializeCommands()
+        {
+            AddCommand = new RelayCommand(ExecuteAdd, CanExecuteAdd);
+            EditCommand = new RelayCommand(ExecuteEdit, CanExecuteEdit);
+            DeleteCommand = new RelayCommand(ExecuteDelete, CanExecuteDelete);
+            RefreshCommand = new RelayCommand(ExecuteRefresh);
+            SearchCommand = new RelayCommand(ExecuteSearch);
         }
 
         private void LoadCustomers()
         {
-            // Ví dụ: load lại danh sách từ DB, ở đây chỉ làm mới lại dữ liệu mẫu
-            Customers.Clear();
-            Customers.Add(new Customer { CustomerID = 1, CompanyName = "A", ContactName = "Nguyen Van A", Phone = "0901234567" });
-            Customers.Add(new Customer { CustomerID = 2, CompanyName = "B", ContactName = "Le Thi B", Phone = "0912345678" });
+            var customerList = _customerService.GetAllCustomers();
+            Customers = new ObservableCollection<Customer>(customerList);
         }
 
-        private void AddCustomer()
+        private bool CanExecuteAdd(object parameter) => !string.IsNullOrWhiteSpace(CompanyNameInput);
+
+        private void ExecuteAdd(object parameter)
         {
-            // Đơn giản: thêm khách hàng mới với ID tự tăng
-            int newId = Customers.Count > 0 ? Customers[^1].CustomerID + 1 : 1;
-            var newCustomer = new Customer
+            var result = MessageBox.Show("Bạn có muốn thêm khách hàng mới không?", "Xác nhận thêm", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (result != MessageBoxResult.Yes) return;
+            var customer = new Customer
             {
-                CustomerID = newId,
-                CompanyName = "Tên công ty mới",
-                ContactName = "Tên liên hệ mới",
-                Phone = "Số điện thoại"
+                CompanyName = CompanyNameInput,
+                ContactName = ContactNameInput,
+                Phone = PhoneInput
             };
-            Customers.Add(newCustomer);
-            SelectedCustomer = newCustomer;
-            MessageBox.Show("Đã thêm khách hàng mới!");
+            _customerService.AddCustomer(customer);
+            LoadCustomers();
+            ClearInputs();
         }
 
-        private void EditCustomer()
+        private bool CanExecuteEdit(object parameter) => SelectedCustomer != null;
+
+        private void ExecuteEdit(object parameter)
         {
             if (SelectedCustomer != null)
             {
-                // Ở đây bạn có thể mở dialog để sửa, ví dụ đơn giản chỉ thông báo
-                MessageBox.Show($"Đã sửa khách hàng: {SelectedCustomer.CompanyName}");
-                // Nếu có UI nhập liệu, cập nhật lại property của SelectedCustomer ở đây
+                var result = MessageBox.Show("Bạn có muốn sửa thông tin khách hàng này không?", "Xác nhận sửa", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (result != MessageBoxResult.Yes) return;
+                SelectedCustomer.CompanyName = CompanyNameInput;
+                SelectedCustomer.ContactName = ContactNameInput;
+                SelectedCustomer.Phone = PhoneInput;
+                _customerService.UpdateCustomer(SelectedCustomer);
+                LoadCustomers();
+                ClearInputs();
             }
         }
 
-        private void DeleteCustomer()
+        private bool CanExecuteDelete(object parameter) => SelectedCustomer != null;
+
+        private void ExecuteDelete(object parameter)
         {
             if (SelectedCustomer != null)
             {
-                var name = SelectedCustomer.CompanyName;
-                Customers.Remove(SelectedCustomer);
-                SelectedCustomer = null;
-                MessageBox.Show($"Đã xóa khách hàng: {name}");
+                var result = MessageBox.Show("Bạn có chắc chắn muốn xóa khách hàng này không?", "Xác nhận xóa", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                if (result != MessageBoxResult.Yes) return;
+                _customerService.DeleteCustomer(SelectedCustomer.CustomerID);
+                LoadCustomers();
+                ClearInputs();
             }
+        }
+
+        private void ExecuteRefresh(object parameter)
+        {
+            LoadCustomers();
+            ClearInputs();
+        }
+
+        private void ExecuteSearch(object parameter)
+        {
+            var customerList = _customerService.Search(SearchKey);
+            Customers = new ObservableCollection<Customer>(customerList);
+        }
+
+        private void ClearInputs()
+        {
+            CompanyNameInput = "";
+            ContactNameInput = "";
+            PhoneInput = "";
+            SelectedCustomer = null;
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

@@ -11,6 +11,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using ChuNhatLamWPF.ViewModels;
+using Lucy_SalesData.BLL.Interfaces;
 
 namespace ChuNhatLamWPF.Views
 {
@@ -19,9 +21,10 @@ namespace ChuNhatLamWPF.Views
     /// </summary>
     public partial class CustomerView : Window
     {
-        public CustomerView()
+        public CustomerView(ICustomerService customerService)
         {
             InitializeComponent();
+            DataContext = new CustomerViewModel(customerService);
         }
     }
 }

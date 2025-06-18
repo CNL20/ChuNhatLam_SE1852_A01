@@ -4,29 +4,30 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Lucy_SalesData.DAL.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Lucy_SalesData.DAL.Singleton
 {
-    public class DataContext
+    public class DataContext : DbContext
     {
-        private static DataContext _instance;
-        public static DataContext Instance => _instance ??= new DataContext();
+        public DataContext(DbContextOptions<DataContext> options) : base(options) { }
 
-        public List<Customer> Customers { get; set; }
-        public List<Order> Orders { get; set; }
-        public List<OrderDetail> OrderDetails { get; set; }
-        public List<Category> Categories { get; set; }
-        public List<Product> Products { get; set; }
-        public List<Employee> Employees { get; set; }
+        public DbSet<Customer> Customers { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderDetail> OrderDetails { get; set; }
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<Product> Products { get; set; }
+        public DbSet<Employee> Employees { get; set; }
 
-        private DataContext()
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            Customers = new List<Customer>();
-            Orders = new List<Order>();
-            OrderDetails = new List<OrderDetail>();
-            Categories = new List<Category>();
-            Products = new List<Product>();
-            Employees = new List<Employee>();
+            modelBuilder.Entity<OrderDetail>()
+                .HasKey(od => new { od.OrderID, od.ProductID });
+
+            modelBuilder.Entity<OrderDetail>()
+                .ToTable("Order Details");
+
+            base.OnModelCreating(modelBuilder);
         }
     }
 }

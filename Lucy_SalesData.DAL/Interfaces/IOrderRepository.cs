@@ -14,7 +14,6 @@ namespace Lucy_SalesData.DAL.Interfaces
         void Add(Order order);
         void Update(Order order);
         void Delete(int id);
-       
-
+        List<Order> GetOrdersByDateRange(DateTime fromDate, DateTime toDate);
     }
 }

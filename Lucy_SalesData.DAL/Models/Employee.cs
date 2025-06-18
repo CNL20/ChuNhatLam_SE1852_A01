@@ -13,5 +13,8 @@ namespace Lucy_SalesData.DAL.Models
         public string UserName { get; set; }
         public string Password { get; set; }
         public string JobTitle { get; set; }
+        public DateTime BirthDate { get; set; }
+        public DateTime HireDate { get; set; }
+        public string Address { get; set; }
     }
 }
