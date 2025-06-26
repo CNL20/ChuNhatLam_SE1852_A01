@@ -34,22 +34,7 @@
                 <TextBlock Text="Đơn giá:"/>
                 <TextBox Width="100" Text="{Binding UnitPriceInput, UpdateSourceTrigger=PropertyChanged}" />
             </StackPanel>
-            <StackPanel Orientation="Vertical" Margin="0,0,10,0">
-                <TextBlock Text="Tồn kho:"/>
-                <TextBox Width="100" Text="{Binding UnitsInStockInput, UpdateSourceTrigger=PropertyChanged}" />
-            </StackPanel>
-            <StackPanel Orientation="Vertical" Margin="0,0,10,0">
-                <TextBlock Text="Đơn vị đang đặt hàng:"/>
-                <TextBox Width="160" Text="{Binding UnitsOnOrderInput, UpdateSourceTrigger=PropertyChanged}" />
-            </StackPanel>
-            <StackPanel Orientation="Vertical" Margin="0,0,10,0">
-                <TextBlock Text="Sắp xếp lại cấp độ:"/>
-                <TextBox Width="160" Text="{Binding ReorderLevelInput, UpdateSourceTrigger=PropertyChanged}" />
-            </StackPanel>
-            <StackPanel Orientation="Vertical" Margin="0,0,10,0">
-                <TextBlock Text="Đã ngừng sản xuất:"/>
-                <TextBox Width="160" Text="{Binding DiscontinuedIDInput, UpdateSourceTrigger=PropertyChanged}" />
-            </StackPanel>
+
             <StackPanel Orientation="Vertical" Margin="0,0,0,0" VerticalAlignment="Bottom">
                 <Button Content="Thêm" Command="{Binding AddCommand}" Width="80" Margin="0,0,0,5"/>
                 <Button Content="Sửa" Command="{Binding EditCommand}" Width="80" Margin="0,0,0,5"/>
