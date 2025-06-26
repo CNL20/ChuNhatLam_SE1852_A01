@@ -148,7 +148,11 @@ namespace ChuNhatLamWPF.ViewModels
                     MessageBox.Show("Vui lòng nhập mã chủng loại!");
                     return;
                 }
-
+                var result = MessageBox.Show(
+                            "Bạn có chắc muốn thêm sản phẩm này không?",
+                            "Xác nhận thêm sản phẩm",
+                            MessageBoxButton.YesNo,
+                            MessageBoxImage.Question);
                 var newProduct = new Product
                 {
                     ProductName = this.ProductNameInput,

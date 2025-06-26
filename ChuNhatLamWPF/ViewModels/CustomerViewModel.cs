@@ -123,6 +123,7 @@ namespace ChuNhatLamWPF.ViewModels
             _customerService.AddCustomer(customer);
             LoadCustomers();
             ClearInputs();
+            MessageBox.Show("Thêm thành công");
         }
 
         private bool CanExecuteEdit(object parameter) => SelectedCustomer != null;
@@ -139,6 +140,7 @@ namespace ChuNhatLamWPF.ViewModels
                 _customerService.UpdateCustomer(SelectedCustomer);
                 LoadCustomers();
                 ClearInputs();
+                MessageBox.Show("Edit thành công");
             }
         }
 
@@ -153,6 +155,7 @@ namespace ChuNhatLamWPF.ViewModels
                 _customerService.DeleteCustomer(SelectedCustomer.CustomerID);
                 LoadCustomers();
                 ClearInputs();
+                MessageBox.Show("Xóa thành công");
             }
         }
 
